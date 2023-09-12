@@ -1,0 +1,88 @@
+import sys
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtWebEngineWidgets import *
+
+class WebBrowser(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        # Tạo cửa sổ chính
+        self.browser = QWebEngineView()
+        self.browser.setUrl(QUrl("https://www.google.com"))
+        self.setCentralWidget(self.browser)
+
+        # Tạo thanh công cụ
+        nav_bar = QToolBar()
+        self.addToolBar(nav_bar)
+
+        # Tạo nút Back
+        back_btn = QAction("Back", self)
+        back_btn.setStatusTip("Back to previous page")
+        back_btn.triggered.connect(self.browser.back)
+        nav_bar.addAction(back_btn)
+
+        # Tạo nút Forward
+        forward_btn = QAction("Forward", self)
+        forward_btn.setStatusTip("Forward to next page")
+        forward_btn.triggered.connect(self.browser.forward)
+        nav_bar.addAction(forward_btn)
+
+        # Tạo nút Reload
+        reload_btn = QAction("Reload", self)
+        reload_btn.setStatusTip("Reload page")
+        reload_btn.triggered.connect(self.browser.reload)
+        nav_bar.addAction(reload_btn)
+
+        # Tạo nút Home
+        home_btn = QAction("Home", self)
+        home_btn.setStatusTip("Go home")
+        home_btn.triggered.connect(self.navigate_home)
+        nav_bar.addAction(home_btn)
+
+        # Tạo ô nhập URL
+        self.url_bar = QLineEdit()
+        self.url_bar.returnPressed.connect(self.navigate_to_url)
+        nav_bar.addWidget(self.url_bar)
+
+        # Tạo nút Search
+        search_btn = QAction("Search", self)
+        search_btn.setStatusTip("Search Google")
+        search_btn.triggered.connect(self.search_google)
+        nav_bar.addAction(search_btn)
+
+        # Cập nhật URL khi trang web được tải xong
+        self.browser.urlChanged.connect(self.update_urlbar)
+
+        # Cài đặt cửa sổ ứng dụng
+        self.setWindowTitle("Web Browser")
+        self.setGeometry(100, 100, 800, 600)
+
+    def navigate_home(self):
+        self.browser.setUrl(QUrl("https://www.google.com"))
+
+    def navigate_to_url(self):
+        q = QUrl(self.url_bar.text())
+        if q.scheme() == "":
+            q.setScheme("http")
+        
+        self.browser.setUrl(q)
+
+    def update_urlbar(self, q):
+        self.url_bar.setText(q.toString())
+        self.url_bar.setCursorPosition(0)
+
+    def search_google(self):
+        search_term = self.url_bar.text()
+        search_url = f"https://www.google.com/search?q={search_term}"
+        self.browser.setUrl(QUrl(search_url))
+
+def main():
+    app = QApplication(sys.argv)
+    QApplication.setApplicationName("Web Browser")
+    window = WebBrowser()
+    window.show()
+    app.exec_()
+
+if __name__ == "__main__":
+    main()
