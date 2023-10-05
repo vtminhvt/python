@@ -1,0 +1,38 @@
+def HN1(n,N,T,D):
+    if (n==1):
+        print(f"D{n}:{N}>{D}")
+    else:
+        HN1(n-1,N,D,T)
+        print(f"D{n}:{N}>{D}")
+        HN1(n-1,T,N,D)
+
+def HN2(n, N, T, D):
+    st = []
+    while True:
+        while n > 1:
+            st.append((n,N,T,D))
+            n=n-1
+            N, T, D = N, D, T
+
+        print(f"D{n}:{N}>>{D}")
+
+        if st!=[]:
+            n, N, T, D = st.pop()
+            print(f"D{n}:{N}>>{D}")
+            n=n-1
+            N, T, D = T, N, D
+        else:
+            break
+
+# Sử dụng hàm hanoi để giải bài toán với n đĩa
+n = 2  # Đổi giá trị này thành số đĩa bạn muốn giải
+N = "N"
+T = "T"
+D = "Đ"
+print("E1")
+HN1(n, N, T, D)
+print("E2")
+HN2(n, N, T, D)
+
+
+
